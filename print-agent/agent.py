@@ -28,15 +28,17 @@ Setup (Linux — one-time):
     Then: sudo udevadm control --reload-rules && sudo udevadm trigger
     uv run agent.py
 
-Known limitation (macOS):
-    The agent talks to the printer over raw USB (libusb). On macOS this can
-    leave the system unable to enumerate the printer for OTHER applications —
-    most notably Brother P-touch Editor, which then reports "cannot communicate
-    with the printer." The agent itself keeps working (it uses a direct USB
-    path), so printing from the web app is unaffected. This is a macOS/libusb
-    limitation, not specific to this agent: power-cycling the printer,
-    replugging the USB cable, and restarting CUPS do NOT clear it — recovery
-    requires rebooting the Mac.
+Troubleshooting — P-touch Editor says "cannot communicate with the printer"
+(observed with the PT-D600 on macOS):
+    This is printer behaviour, not caused by this agent — it occurs even if
+    the agent was never run. After the PT-D600 auto-powers off, its USB
+    interface stays electrically present, so the OS keeps the stale device
+    entry and never re-enumerates it. Once the printer is turned back on,
+    this agent still prints (it re-claims the device from scratch on every
+    job), but P-touch Editor can no longer communicate with it. Power-cycling
+    the printer with the cable attached does NOT clear the state. To recover
+    (no reboot needed): quit P-touch Editor, unplug the USB cable, power the
+    printer off and back on, replug the cable, then restart P-touch Editor.
 
 The agent listens on http://localhost:9100 and accepts requests from the web app.
 Keep it running while printing; stop with Ctrl-C.
