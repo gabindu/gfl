@@ -28,6 +28,16 @@ Setup (Linux — one-time):
     Then: sudo udevadm control --reload-rules && sudo udevadm trigger
     uv run agent.py
 
+Known limitation (macOS):
+    The agent talks to the printer over raw USB (libusb). On macOS this can
+    leave the system unable to enumerate the printer for OTHER applications —
+    most notably Brother P-touch Editor, which then reports "cannot communicate
+    with the printer." The agent itself keeps working (it uses a direct USB
+    path), so printing from the web app is unaffected. This is a macOS/libusb
+    limitation, not specific to this agent: power-cycling the printer,
+    replugging the USB cable, and restarting CUPS do NOT clear it — recovery
+    requires rebooting the Mac.
+
 The agent listens on http://localhost:9100 and accepts requests from the web app.
 Keep it running while printing; stop with Ctrl-C.
 """
